@@ -1,9 +1,12 @@
+//[{"id":0,"title":"Test Title","text":"Test text"}]
+
 // ===============================================================================
 // LOAD DATA
 // We are linking our routes to a series of "data" sources.
 // These data sources hold arrays of information on table-data, waitinglist, etc.
 // ===============================================================================
  const db = require("../db/db");
+ const uuidv4 = require('uuid/v4')
  const fs = require("fs")
 
 
@@ -35,9 +38,8 @@ module.exports = function(app) {
     // req.body hosts is equal to the JSON post sent from the user
     // This works because of our body parsing middleware
     let receivedNote = req.body;
-    let lastId = db[db.length - 1].id
-    console.log(lastId);
-    let newID = lastId +1;
+    let newID = uuidv4();
+    //console.log(newID);
     receivedNote.id = newID;
 
     db.push(receivedNote);
@@ -46,12 +48,21 @@ module.exports = function(app) {
   });
 
   app.delete("/api/notes/:id", function(req, res) {
-    db.splice(req.params.id, 1)
-    console.log(db)
+    let dbArray = db.filter((item) => {
+      //console.log(typeof(parseInt(item.id)))
+      //console.log(typeof(parseInt(req.params)))
+       if (item.id === req.params.id) {
+         return false;
+       }
+       else {
+         return true;
+       }
+    })
+    db.push(dbArray)
+    // console.log(newArray)
+    console.log(dbArray)
     res.json(db)
   });
-
-
 
 
   // ---------------------------------------------------------------------------
