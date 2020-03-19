@@ -6,8 +6,9 @@
 // These data sources hold arrays of information on table-data, waitinglist, etc.
 // ===============================================================================
  const db = require("../db/db");
- const uuidv4 = require('uuid/v4')
- const fs = require("fs")
+ const fs = require("fs");
+ const uuidv4 = require('uuid/v4');
+ //const readWrite = require("readWrite");
 
 
 // ===============================================================================
@@ -39,30 +40,66 @@ module.exports = function(app) {
     // This works because of our body parsing middleware
     let receivedNote = req.body;
     let newID = uuidv4();
-    //console.log(newID);
+
     receivedNote.id = newID;
 
-    db.push(receivedNote);
+    //db.push(receivedNote);
   
-    res.json(db);
-  });
+    fs.readFile("db/db.json", function (err, data) {
+      if (err) throw err;
+
+      let notesArray = JSON.parse(data);
+      
+      notesArray.push(receivedNote);
+
+      fs.writeFile("db/db.json", function (err, data) {
+        if (err) throw err;
+        console.log("SUcessfully wrote to 'db.json' file.")
+      })
+    });
+
+
+    // fs.writeFile("db/db.json", JSON.stringify(db), function(err) {
+    //   if (err) {
+    //     console.log(err)
+    //   }
+    //})
+
+
+    res.json(receivedNote);
+   });
 
   app.delete("/api/notes/:id", function(req, res) {
-    let dbArray = db.filter((item) => {
-      //console.log(typeof(parseInt(item.id)))
-      //console.log(typeof(parseInt(req.params)))
-       if (item.id === req.params.id) {
-         return false;
-       }
-       else {
-         return true;
-       }
+    fs.readFile("db/db.json",function (err, data) {
+      fs.writeFile("db/db.json", JSON.stringify(JSON.parse(data).filter()))
     })
-    db.push(dbArray)
+  })
+}
+
+
+
+
+    // let dbArray = db.filter((item) => {              objn= db[i] item.id = id, strinify and send back  RAeturn true or false, not filter save to file send back
+    //   //console.log(typeof(parseInt(item.id)))
+    //   //console.log(typeof(parseInt(req.params)))
+    //    if (item.id === req.params.id) {
+    //      return false;
+    //    }
+    //    else {
+    //      return true;
+    //    }
+    // })
     // console.log(newArray)
-    console.log(dbArray)
-    res.json(db)
-  });
+  //   for (var i = 0; i < db.length; i++) {
+  //     var obj = db[i];
+  
+  //     if (obj.id === req.params.id) {
+  //         db.splice(i, 1);
+  //     }
+  // }
+  //delete a note- read data, parse into json, stringify data,
+   // res.json(db)
+  //});
 
 
   // ---------------------------------------------------------------------------
@@ -76,4 +113,4 @@ module.exports = function(app) {
 
 //     res.json({ ok: true });
 //   });//
-};
+// )};

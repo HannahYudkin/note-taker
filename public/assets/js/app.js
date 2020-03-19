@@ -57,6 +57,7 @@ var handleNoteSave = function() {
   };
 
   saveNote(newNote).then(function(data) {
+    console.log(data)
     getAndRenderNotes();
     renderActiveNote();
   });
@@ -115,7 +116,7 @@ var renderNoteList = function(notes) {
     var $li = $("<li class='list-group-item'>").data(note);
     var $span = $("<span>").text(note.title);
     var $delBtn = $(
-      "<i class='fas fa-trash-alt float-right text-danger delete-note'>"
+      "<i class='fas fa-trash-alt float-right text-danger delete-note' data-ID="+ notes[i].id + ">"
     );
 
     $li.append($span, $delBtn);
@@ -128,6 +129,7 @@ var renderNoteList = function(notes) {
 // Gets notes from the db and renders them to the sidebar
 var getAndRenderNotes = function() {
   return getNotes().then(function(data) {
+    console.log(data)
     renderNoteList(data);
   });
 };
