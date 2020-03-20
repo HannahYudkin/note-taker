@@ -6,7 +6,7 @@ This application runs in node.js using Express and is deployed on Heroku.
 
 Visit [https://radiant-fortress-99196.herokuapp.com/](https://radiant-fortress-99196.herokuapp.com/) to see the deployed application.
 
-![Image of Application](https://github.com/jenniferkirwin/note-taker/blob/master/note-taker-app.png?raw=true)
+![Image of Application](https://github.com/HannahYudkin/note-taker/blob/master/public/assets/note.png)
 
 ## Built With
 
