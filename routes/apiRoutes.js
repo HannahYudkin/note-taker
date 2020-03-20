@@ -23,7 +23,8 @@ module.exports = function(app) {
   // ---------------------------------------------------------------------------
 
   app.get("/api/notes", function(req, res) {
-    res.json(db);
+    let obj = JSON.parse(fs.readFileSync("db/db.json", "utf8"));
+    return res.json(obj);
 
   });
 
@@ -42,8 +43,6 @@ module.exports = function(app) {
     let newID = uuidv4();
 
     receivedNote.id = newID;
-
-    //db.push(receivedNote);
   
     fs.readFile("db/db.json", function (err, data) {
       if (err) throw err;
@@ -52,26 +51,29 @@ module.exports = function(app) {
       
       notesArray.push(receivedNote);
 
-      fs.writeFile("db/db.json", function (err, data) {
+      fs.writeFile("db/db.json", JSON.stringify(notesArray), "utf8", err => {
         if (err) throw err;
-        console.log("SUcessfully wrote to 'db.json' file.")
+        console.log("Sucessfully wrote to 'db.json' file.")
+        res.json(receivedNote);
       })
     });
 
-
-    // fs.writeFile("db/db.json", JSON.stringify(db), function(err) {
-    //   if (err) {
-    //     console.log(err)
-    //   }
-    //})
-
-
-    res.json(receivedNote);
    });
 
   app.delete("/api/notes/:id", function(req, res) {
     fs.readFile("db/db.json",function (err, data) {
-      fs.writeFile("db/db.json", JSON.stringify(JSON.parse(data).filter()))
+      if (err) throw err;
+
+      const readData = JSON.parse(data);
+      const filtered = readData.filter((note) => note.id !== req.params.id);
+       const writeData = JSON.stringify(filtered)
+      fs.writeFile("db/db.json", writeData, "utf8", err => {
+        if (err) throw err;
+        res.status(200).end();
+
+        console.log("Successfully deleted note.");
+      })
+      //fs.writeFile("db/db.json", JSON.stringify(JSON.parse(data).filter(note) => note.id !== req.params.id))
     })
   })
 }
@@ -100,17 +102,3 @@ module.exports = function(app) {
   //delete a note- read data, parse into json, stringify data,
    // res.json(db)
   //});
-
-
-  // ---------------------------------------------------------------------------
-  // I added this below code so you could clear out the table while working with the functionality.
-  // Don"t worry about it!
-
-//   app.post("/api/clear", function(req, res) {
-//     // Empty out the arrays of data
-//     tableData.length = 0;
-//     waitListData.length = 0;
-
-//     res.json({ ok: true });
-//   });//
-// )};
